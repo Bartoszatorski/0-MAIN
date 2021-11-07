@@ -12,29 +12,29 @@ Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
     
     Dim value As String: value = ""
     Dim col As Long: col = 1
-    Dim I As Long: I = 0 ' Skoroszyt [sheet_id]
+    Dim i As Long: i = 0 ' Skoroszyt [sheet_id]
     
     value = Target.value
-    I = 1
+    i = 1
     col = 1
     
-    Call mobileIn(value, col, I)
+    Call mobileIn(value, col, i)
     
 End Sub
 Sub mobileOut()
     On Error Resume Next
-    Dim I As Long
+    Dim i As Long
     Dim fileName As String:     fileName = "C:\Users\smoka\OneDrive\0-MAIN\Notion_mobile.xlsx"
     Dim wb As Workbook:         Set wb = Workbooks.Open(fileName:=fileName, UpdateLinks:=0)
-    Dim ws As Worksheet:        Set ws = wb.Sheets(I)
+    Dim ws As Worksheet:        Set ws = wb.Sheets(i)
     Dim rowNext As Long:        rowNext = 21 'ws.Cells(1, col).CurrentRegion.Rows.Count + 1
     wb.Close 1
 End Sub
-Sub mobileNext(I As Long)
+Sub mobileNext(i As Long)
     On Error Resume Next
     Dim fileName As String:     fileName = "C:\Users\smoka\OneDrive\0-MAIN\Notion_mobile.xlsx"
     Dim wb As Workbook:         Set wb = Workbooks.Open(fileName:=fileName, UpdateLinks:=0)
-    Dim ws As Worksheet:        Set ws = wb.Sheets(I)
+    Dim ws As Worksheet:        Set ws = wb.Sheets(i)
     Dim rowNext As Long:        rowNext = 21 'ws.Cells(1, col).CurrentRegion.Rows.Count + 1
     
     
@@ -45,47 +45,6 @@ Sub mobileNext(I As Long)
 
 End Sub
 
-'———————————————————————————————————————————————————————————————————————————————————————————
-Function ArrayRemoveDups(MyArray As Variant) As Variant
-    
-    Dim nFirst As Long, nLast As Long, I As Long
-    Dim item As String
-    
-    Dim arrTemp() As String
-    Dim Coll As New Collection
- 
-    'Get First and Last Array Positions
-    nFirst = LBound(MyArray)
-    nLast = UBound(MyArray)
-    ReDim arrTemp(nFirst To nLast)
- 
-    'Convert Array to String
-    For I = nFirst To nLast
-        arrTemp(I) = CStr(MyArray(I))
-    Next I
-    
-    'Populate Temporary Collection
-    On Error Resume Next
-    For I = nFirst To nLast
-        Coll.Add arrTemp(I), arrTemp(I)
-    Next I
-    Err.Clear
-    On Error GoTo 0
- 
-    'Resize Array
-    nLast = Coll.Count + nFirst - 1
-    ReDim arrTemp(nFirst To nLast)
-    
-    'Populate Array
-    For I = nFirst To nLast
-        arrTemp(I) = Coll(I - nFirst + 1)
-    Next I
-    
-    'Output Array
-    ArrayRemoveDups = arrTemp
- 
-End Function
-'———————————————————————————————————————————————————————————————————————————————————————————
 Sub pobierz2()
     Dim row As Long
     Dim col As Long
@@ -115,7 +74,7 @@ Sub pobierz2()
 End Sub
 Public Sub pobierz()
    
-    Dim I As Long
+    Dim i As Long
     Dim value As String
     Dim col As Long: col = 1
 
@@ -126,16 +85,16 @@ Public Sub pobierz()
     Dim x
     Dim colLast As Long: colLast = 0
     
-    For I = iMax To 1 Step -1
+    For i = iMax To 1 Step -1
         'Call MobileIn("value", col, i)
-        value = I & "_v0"
+        value = i & "_v0"
         
         colLast = 1
-        If I = iMax Then colLast = 0
-        If I = 1 Then colLast = 2
+        If i = iMax Then colLast = 0
+        If i = 1 Then colLast = 2
 
-        arr(I) = mobileIn(value, col, 1, colLast)
-    Next I
+        arr(i) = mobileIn(value, col, 1, colLast)
+    Next i
     
     colLast = 0
     
@@ -145,11 +104,11 @@ Public Sub pobierz()
     Next x
     
 End Sub
-Function mobileIn(value As String, col As Long, I As Long, colLast As Long)
+Function mobileIn(value As String, col As Long, i As Long, colLast As Long)
     On Error Resume Next
     Dim fileName As String:     fileName = "C:\Users\smoka\OneDrive\Documents\Notion_mobile.xlsx"
     Dim wb As Workbook:         Set wb = Workbooks.Open(fileName:=fileName, UpdateLinks:=0)
-    Dim ws As Worksheet:        Set ws = wb.Sheets(I)
+    Dim ws As Worksheet:        Set ws = wb.Sheets(i)
     Dim rowNext As Long:        rowNext = wb.Sheets(2).Cells(1, 1)
     
     
@@ -170,11 +129,40 @@ Function mobileIn(value As String, col As Long, I As Long, colLast As Long)
     End With
     
     mobileIn = value
-    Debug.Print Now, "<mobile_in>", I, col, colLast, rowNext, value
+    Debug.Print Now, "<mobile_in>", i, col, colLast, rowNext, value
 
     'wb.Save
 End Function
-Function uDane(t)
-End Function
-
+Sub txtfil()
+    Dim fileName As String
+    Dim i
+    fileName = "C:\Users\smoka\OneDrive\0-MAIN\txt\d1.txt"
+    
+    Dim fso As Object, ts As Object
+    'Need to define constants manually
+    Const ForReading = 1, ForWriting = 2, ForAppending = 8
+    'Need to define constants manually
+    Const TristateUseDefault = -2, TristateTrue = -1, TristateFalse = 0
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    'The below will not Hello.txt if it does not exist and will open file for Unicode appending
+    Set ts = fso.OpenTextFile(fileName, ForAppending, True, TristateFalse)
+    
+    For i = 1 To 100
+    ts.Writeline "Hello"
+    Next i
+    ts.Close
+     
+    'Open same file for reading
+    Set ts = fso.OpenTextFile(fileName, ForReading, True, TristateFalse)
+     
+    'Read till the end
+    Do Until ts.AtEndOfStream
+         Debug.Print "Printing line " & ts.Line; "  -  ";
+         Debug.Print ts.ReadLine 'Print a line from the file
+    Loop
+    ts.Close
+    
+    End Sub
+    
 
