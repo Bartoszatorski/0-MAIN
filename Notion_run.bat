@@ -1,0 +1,1 @@
+csript uruchom.vbs
